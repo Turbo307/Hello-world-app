@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function ContactCard({ nombre, apellido, edad, telefono, correo }) {
+export default function ContactCard({ nombre, apellido, edad, telefono, correo, temaOscuro }) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.nameText}>{nombre} {apellido}</Text>
-      <Text style={styles.infoText}>Edad: {edad}</Text>
-      <Text style={styles.infoText}>Tel: {telefono}</Text>
-      <Text style={styles.infoText}>Correo: {correo}</Text>
+    <View style={[ styles.card, { backgroundColor: temaOscuro ? '#303030' : '#ded0b9' } ]}>
+      <Text style={[styles.nameText, { color: temaOscuro ? '#ffffff' : '#342601' }]}>{nombre} {apellido}</Text>
+      <Text style={[styles.infoText, { color: temaOscuro ? '#dddddd' : '#342601' }]}>Edad: {edad}</Text>
+      <Text style={[styles.infoText, { color: temaOscuro ? '#dddddd' : '#342601' }]}>Tel: {telefono}</Text>
+      <Text style={[styles.infoText, { color: temaOscuro ? '#dddddd' : '#342601' }]}>Correo: {correo}</Text>
     </View>
   );
 }
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     width: '100%',
     borderWidth: 1,
-    borderColor: '#867760',
+    borderColor: '#87693c',
   },
   nameText: {
     fontSize: 18,

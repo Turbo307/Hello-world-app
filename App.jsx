@@ -1,92 +1,147 @@
-import { StyleSheet, Text, View, TextInput, Button, ScrollView, Image } from 'react-native';
-import ContactCard from './src/components/ContactCard';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function App() {
-  const contacts = [
-    {
-      nombre: "Cesar",
-      apellido: "H",
-      edad: "29",
-      telefono: "6649191123",
-      correo: "Cesar@gmail.com"
-    },
-    {
-      nombre: "Leonidas",
-      apellido: "G",
-      edad: "20",
-      telefono: "664654321",
-      correo: "Leonidas@gmail.com"
-    },
-        {
-      nombre: "Maurelio",
-      apellido: "M",
-      edad: "22",
-      telefono: "664004321",
-      correo: "Maurelio@gmail.com"
-    }
-  ];
+import HomeScreen from './src/screens/HomeScreen';
+import NewContactScreen from './src/screens/NewContactScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 
+// Importacion de la pantalla EditContactScreen
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import EditContactScreen from './src/screens/EditContactScreen';
+
+const Tab = createBottomTabNavigator();
+
+const Stack = createNativeStackNavigator();
+
+function InicioStack({ contacts, temaOscuro, editarContacto }) {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={require('./src/assets/libro.png')}
-        style={styles.logoImage}
-        resizeMode="contain"
-      />
-      
-      <TextInput style={styles.input} placeholder="Nombre" />
-      <TextInput style={styles.input} placeholder="Apellido" />
-      <TextInput style={styles.input} placeholder="Edad" keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="Tel" keyboardType="phone-pad" />
-      <TextInput style={styles.input} placeholder="Correo" keyboardType="email-address" />
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: temaOscuro ? '#1c1c1c' : '#ffeccd',
+        },
+        headerTintColor: temaOscuro ? '#ffffff' : '#87693c',
+      }}>
+      <Stack.Screen name="ListaContactos" options={{ headerShown: false }}>
+        {(props) => (
+          <HomeScreen
+            {...props}
+            contacts={contacts}
+            temaOscuro={temaOscuro}
+          />
+        )}
+      </Stack.Screen>
 
-      <View style={styles.buttonContainer}>
-        <Button 
-          title="Guardar" 
-          onPress={() => console.log('Guardando...')}
-          color="#48ca64"
+    <Stack.Screen
+      name="EditarContacto"
+      options={{ title: 'Editar contacto' }}
+    >
+      {(props) => (
+        <EditContactScreen
+          {...props}
+          editarContacto={editarContacto}
+          temaOscuro={temaOscuro}
         />
-      </View>
-      
-
-    </ScrollView>
+      )}
+    </Stack.Screen>
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    minHeight: '100%',
-    paddingVertical: 50,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    backgroundColor: '#ffeccdd6',
-  },
-  logoImage: {
-    width: 100,
-    height: 80,
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-    borderColor: '#87693c',
-  },
-  buttonContainer: {
-    width: '50%',
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  listContainer: {
-    width: '100%',
-  },
-  listTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-});
+export default function App() {
+
+  // Aquí van nuestros estados
+  const [contacts, setContacts] = useState([]);
+
+  // para tema oscuro
+  const [temaOscuro, setTemaOscuro] = useState(false);
+
+  // Función para agregar contactos
+  const agregarContacto = (nuevoContacto) => {
+    setContacts((anteriores) => [...anteriores, nuevoContacto]);
+  };
+
+  // funcion para editar contactos
+  const editarContacto = (contactoActualizado) => {
+  setContacts((anteriores) =>
+    anteriores.map((contacto) =>
+      contacto.id === contactoActualizado.id
+        ? contactoActualizado
+        : contacto
+    )
+  );
+};
+
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerStyle: {
+            backgroundColor: temaOscuro ? '#1c1c1c' : '#ffeccd',
+          },
+          headerTintColor: temaOscuro ? '#ffffff' : '#87693c',
+
+          tabBarStyle: {
+            backgroundColor: temaOscuro ? '#1c1c1c' : '#ffeccd',
+          },
+
+          tabBarActiveTintColor: '#48ca64',
+          tabBarInactiveTintColor: temaOscuro ? '#bbbbbb' : '#342601',
+
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
+
+            if (route.name === 'Inicio') {
+              iconName = 'home-outline';
+            } else if (route.name === 'Nuevo contacto') {
+              iconName = 'person-add-outline';
+            } else {
+              iconName = 'settings-outline';
+            }
+
+            return (
+              <Ionicons
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            );
+          },
+        })}
+      >
+        <Tab.Screen name="Inicio" options={{ headerShown: false }}>
+          {() => (
+            <InicioStack
+              contacts={contacts}
+              temaOscuro={temaOscuro}
+              editarContacto={editarContacto} 
+            />
+          )}
+        </Tab.Screen>
+
+        <Tab.Screen name="Nuevo contacto">
+          {(props) => (
+            <NewContactScreen
+              {...props}
+              agregarContacto={agregarContacto}
+              temaOscuro={temaOscuro}
+            />
+          )}
+        </Tab.Screen>
+
+        <Tab.Screen name="Configuración">
+          {(props) => (
+            <SettingsScreen
+              {...props}
+              temaOscuro={temaOscuro}
+              setTemaOscuro={setTemaOscuro}
+            />
+          )}
+        </Tab.Screen>
+
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
