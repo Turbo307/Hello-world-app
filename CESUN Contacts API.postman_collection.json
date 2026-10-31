@@ -1,0 +1,267 @@
+{
+  "info": {
+    "_postman_id": "dd31b3d7-4a28-48a0-9548-0c2c3f583ccf",
+    "name": "CESUN Contacts API",
+    "description": "CRUD de contactos aislado por serial_number (va en la URL).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "7465671",
+    "_collection_link": "https://go.postman.co/collection/7465671-dd31b3d7-4a28-48a0-9548-0c2c3f583ccf?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Listar contactos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/contacts/{{serial_number}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "contacts",
+            "{{serial_number}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Crear contacto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) { pm.collectionVariables.set('contact_id', pm.response.json().id); }"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Ana\",\n  \"last_name\": \"Perez\",\n  \"age\": 30,\n  \"email\": \"ana@example.com\",\n  \"phone\": \"5551234567\",\n  \"birth_date\": \"1995-01-02\",\n  \"contact_type\": \"Personal\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/contacts/{{serial_number}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "contacts",
+            "{{serial_number}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Detalle de contacto",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/contacts/{{serial_number}}/{{contact_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "contacts",
+            "{{serial_number}}",
+            "{{contact_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar contacto (PUT)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Ana\",\n  \"last_name\": \"Lopez UPDATE\",\n  \"age\": 31,\n  \"email\": \"ana@example.com\",\n  \"phone\": \"5551234567\",\n  \"birth_date\": \"1995-01-02\",\n  \"contact_type\": \"Personal\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/contacts/{{serial_number}}/{{contact_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "contacts",
+            "{{serial_number}}",
+            "{{contact_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar parcial (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"age\": 32\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/contacts/{{serial_number}}/{{contact_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "contacts",
+            "{{serial_number}}",
+            "{{contact_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar contacto (soft delete)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/contacts/{{serial_number}}/{{contact_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "contacts",
+            "{{serial_number}}",
+            "{{contact_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Demo: error 500",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/error/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "error",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Demo: respuesta lenta (3s)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/slow/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "slow",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "serial_number",
+      "value": "ALUMNO-001"
+    },
+    {
+      "key": "contact_id",
+      "value": "1"
+    }
+  ]
+}

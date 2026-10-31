@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
 
-function InicioStack({ contacts, temaOscuro, editarContacto }) {
+function InicioStack({temaOscuro, editarContacto }) {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -24,11 +24,14 @@ function InicioStack({ contacts, temaOscuro, editarContacto }) {
         },
         headerTintColor: temaOscuro ? '#ffffff' : '#87693c',
       }}>
-      <Stack.Screen name="ListaContactos" options={{ headerShown: false }}>
+      <Stack.Screen
+  name="ListaContactos"
+  options={{ title: 'Lista de Contactos' }}
+>
         {(props) => (
           <HomeScreen
             {...props}
-            contacts={contacts}
+            
             temaOscuro={temaOscuro}
           />
         )}
