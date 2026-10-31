@@ -5,7 +5,8 @@ import {
   Pressable,
   Image,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 
 import ContactCard from '../components/ContactCard';
@@ -17,6 +18,8 @@ export default function HomeScreen({ temaOscuro, navigation }) {
   const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
   const SERIAL_NUMBER =process.env.EXPO_PUBLIC_SERIAL_NUMBER;
 
+  const [eliminandoId, setEliminandoId] = useState(null);
+
   // contactos recibidos de la API
   const [contacts, setContacts] = useState([]);
 
@@ -26,6 +29,68 @@ export default function HomeScreen({ temaOscuro, navigation }) {
   // estado de carga y errores
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState('');
+
+  
+const eliminarContacto = (contacto) => {
+
+  Alert.alert(
+    'Eliminar contacto',
+    `¿Estás seguro de que deseas eliminar a ${contacto.nombre} ${contacto.apellido}?`,
+    [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: async () => {
+
+          try {
+            setEliminandoId(contacto.id);
+
+            console.log('Eliminando contacto:', contacto.id);
+
+            const endpoint =
+              BASE_URL + "/api/contacts/" + SERIAL_NUMBER + "/" + contacto.id + "/";
+
+            const res = await fetch(endpoint, {
+              method: 'DELETE'
+            });
+
+            if (!res.ok) {
+              const error = await res.text();
+              console.error('Error de la API:', error);
+              throw new Error('No se pudo eliminar el contacto');
+            }
+
+            console.log('Contacto eliminado correctamente');
+
+            // actualizar la lista sin volver a consultar la API
+            setContacts((contactosActuales) =>
+              contactosActuales.filter(
+                (item) => item.id !== contacto.id
+              )
+            );
+
+            Alert.alert('Éxito', 'Contacto eliminado correctamente.');
+
+          } catch (error) {
+            console.error('Error al eliminar contacto:', error);
+
+            Alert.alert(
+              'Error',
+              'No se pudo eliminar el contacto.'
+            );
+
+          } finally {
+            setEliminandoId(null);
+          }
+        }
+      }
+    ]
+  );
+};
 
   // consultar la API cuando Inicio obtiene el enfoque
   useFocusEffect(
@@ -152,21 +217,30 @@ export default function HomeScreen({ temaOscuro, navigation }) {
 
       {contactosFiltrados.map((contacto) => (
         <Pressable
-          key={contacto.id}
-          style={{ width: '100%' }}
-          onPress={() =>
-            navigation.navigate('EditarContacto', { contacto })
-          }
-        >
-          <ContactCard
-            nombre={contacto.nombre}
-            apellido={contacto.apellido}
-            edad={contacto.edad}
-            telefono={contacto.telefono}
-            correo={contacto.correo}
-            temaOscuro={temaOscuro}
-          />
-        </Pressable>
+  key={contacto.id}
+  style={{ width: '100%' }}
+
+  // oque normal: editar
+  onPress={() =>
+    navigation.navigate('EditarContacto', { contacto })
+  }
+
+  // mantener presionado: eliminar
+  onLongPress={() => eliminarContacto(contacto)}
+
+  delayLongPress={500}
+
+  disabled={eliminandoId === contacto.id}
+>
+  <ContactCard
+    nombre={contacto.nombre}
+    apellido={contacto.apellido}
+    edad={contacto.edad}
+    telefono={contacto.telefono}
+    correo={contacto.correo}
+    temaOscuro={temaOscuro}
+  />
+</Pressable>
       ))}
 
     </ScrollView>
